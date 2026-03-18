@@ -1,2 +1,3 @@
-# Simulation_Mobile_Money
-Application console permettant de simuler un systeme de Mobile Money
+# DESCRIPTION DU PROJET
+# INSTRUCTIONS D'INSTALLATION 
+# EXEMPLES D'UTILISATION
