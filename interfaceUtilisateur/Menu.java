@@ -1,25 +1,22 @@
 package interfaceUtilisateur;
 
 import model.Client;
-import model.Compte;
+// import model.Compte;
 import model.Operation;
-import service.serviceClient;
-import service.serviceCompte;
-import service.serviceOperation;
+import service.ServiceClient;
+import service.ServiceCompte;
+import service.ServiceOperation;
 
 import java.util.List;
 import java.util.Scanner;
 
-/**
- * Interface console principale de l'application Sama Money.
- * Gère la navigation et les interactions avec l'utilisateur.
- */
+
 public class Menu {
 
     private Scanner scanner;
-    private serviceClient serviceClient;
-    private serviceCompte serviceCompte;
-    private serviceOperation serviceOperation;
+    private ServiceClient ServiceClient;
+    private ServiceCompte ServiceCompte;
+    private ServiceOperation ServiceOperation;
 
     private static final String RESET  = "\033[0m";
     private static final String JAUNE  = "\033[33m";
@@ -31,14 +28,11 @@ public class Menu {
 
     public Menu() {
         this.scanner          = new Scanner(System.in);
-        this.serviceClient    = new serviceClient();
-        this.serviceCompte    = new serviceCompte();
-        this.serviceOperation = new serviceOperation();
+        this.ServiceClient    = new ServiceClient();
+        this.ServiceCompte    = new ServiceCompte();
+        this.ServiceOperation = new ServiceOperation();
     }
 
-    // -------------------------------------------------------
-    // Boucle principale
-    // -------------------------------------------------------
     public void demarrer() {
         afficherBienvenue();
         int choix = -1;
@@ -72,7 +66,7 @@ public class Menu {
         String telephone = lireTexte("Téléphone (7XXXXXXXX)");
         String adresse   = lireTexte("Adresse");
 
-        boolean succes = serviceClient.ajouterClient(nom, prenom, telephone, adresse);
+        boolean succes = ServiceClient.ajouterClient(nom, prenom, telephone, adresse);
         if (succes) {
             System.out.println("\n  " + VERT + "✓ Client ajouté avec succès !" + RESET);
         }
@@ -81,7 +75,7 @@ public class Menu {
 
     private void menuAfficherClients() {
         afficherTitre("LISTE DES CLIENTS");
-        List<Client> clients = serviceClient.listerClients();
+        List<Client> clients = ServiceClient.listerClients();
 
         if (clients.isEmpty()) {
             System.out.println("  " + GRIS + "Aucun client enregistré." + RESET);
@@ -104,7 +98,7 @@ public class Menu {
     private void menuCreerCompte() {
         afficherTitre("CRÉER UN COMPTE");
         int client = lireEntier("ID du client");
-        serviceCompte.creerCompte(client);
+        ServiceCompte.creerCompte(client);
         pauseEtRetour();
     }
 
@@ -112,36 +106,36 @@ public class Menu {
         afficherTitre("DÉPÔT D'ARGENT");
         String numeroCompte = lireTexte("Numéro de compte");
         double montant      = lireDouble("Montant (FCFA)");
-        serviceOperation.effectuerDepot(numeroCompte, montant);
+        ServiceOperation.effectuerDepot(numeroCompte, montant);
         pauseEtRetour();
     }
 
-   
+
     private void menuRetrait() {
         afficherTitre("RETRAIT D'ARGENT");
         String numeroCompte = lireTexte("Numéro de compte");
         double montant      = lireDouble("Montant (FCFA)");
-        serviceOperation.effectuerRetrait(numeroCompte, montant);
+        ServiceOperation.effectuerRetrait(numeroCompte, montant);
         pauseEtRetour();
     }
 
-   
+
     private void menuTransfert() {
         afficherTitre("TRANSFERT D'ARGENT");
         String compteSource = lireTexte("Compte source");
         String compteDest   = lireTexte("Compte destination");
         double montant      = lireDouble("Montant (FCFA)");
-        serviceOperation.effectuerTransfert(compteSource, compteDest, montant);
+        ServiceOperation.effectuerTransfert(compteSource, compteDest, montant);
         pauseEtRetour();
     }
 
-   
+
     private void menuPaiementMarchand() {
         afficherTitre("PAIEMENT MARCHAND");
         String numeroCompte = lireTexte("Numéro de compte");
         String marchand     = lireTexte("Nom du marchand");
         double montant      = lireDouble("Montant (FCFA)");
-        serviceOperation.effectuerPaiement(numeroCompte, marchand, montant);
+        ServiceOperation.effectuerPaiement(numeroCompte, marchand, montant);
         pauseEtRetour();
     }
 
@@ -156,9 +150,9 @@ public class Menu {
         List<Operation> operations;
         if (choix == 2) {
             String numeroCompte = lireTexte("Numéro de compte");
-            operations = serviceOperation.listerOperationsParCompte(numeroCompte);
+            operations = ServiceOperation.listerOperationsParCompte(numeroCompte);
         } else {
-            operations = serviceOperation.listerToutesOperations();
+            operations = ServiceOperation.listerToutesOperations();
         }
 
         if (operations.isEmpty()) {
@@ -172,7 +166,7 @@ public class Menu {
             for (Operation op : operations) {
                 System.out.printf("  %-5d %-12s %-14.0f %-12s %-15s %-15s%n",
                         op.getId(),
-                        op.getTypeOperation(),
+                        op.getTypeOperationString(),
                         op.getMontant(),
                         op.getDateOperation().toLocalDate().toString(),
                         op.getCompteSource(),
@@ -184,15 +178,11 @@ public class Menu {
         pauseEtRetour();
     }
 
-    // -------------------------------------------------------
-    // Affichage utilitaires
-    // -------------------------------------------------------
     private void afficherBienvenue() {
         // Efface la console
         System.out.print("\033[H\033[2J");
         System.out.flush();
 
-        // ASCII Art SAMA en jaune
         System.out.println(JAUNE);
         System.out.println("   ███████╗ █████╗ ███╗   ███╗ █████╗ ");
         System.out.println("   ██╔════╝██╔══██╗████╗ ████║██╔══██╗");
@@ -201,7 +191,6 @@ public class Menu {
         System.out.println("   ███████║██║  ██║██║ ╚═╝ ██║██║  ██║");
         System.out.println("   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝");
 
-        // ASCII Art MONEY en cyan
         System.out.println(CYAN);
         System.out.println("   ███╗   ███╗ ██████╗ ███╗   ██╗███████╗██╗   ██╗");
         System.out.println("   ████╗ ████║██╔═══██╗████╗  ██║██╔════╝╚██╗ ██╔╝");
@@ -211,7 +200,6 @@ public class Menu {
         System.out.println("   ╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝   ╚═╝  ");
         System.out.println(RESET);
 
-        // Encadré infos
         System.out.println(GRIS + "  ╔══════════════════════════════════════════════════╗");
         System.out.println(       "  ║  " + BLANC + " Système de Mobile Money  |  Dakar, Sénégal  " + GRIS + "  ║");
         System.out.println(       "  ║  " + BLANC + "        Version 1.0  —  Groupe Java 2026      " + GRIS + "║");
@@ -258,9 +246,7 @@ public class Menu {
         scanner.nextLine();
     }
 
-    // -------------------------------------------------------
-    // Lecture sécurisée des entrées
-    // -------------------------------------------------------
+    
     private String lireTexte(String label) {
         System.out.print("  " + VERT + label + " : " + RESET);
         return scanner.nextLine().trim();

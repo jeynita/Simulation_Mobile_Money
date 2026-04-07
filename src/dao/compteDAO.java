@@ -1,6 +1,7 @@
 package dao;
 
 import database.DatabaseConnection;
+import model.Client;
 import model.Compte;
 
 import java.sql.*;
@@ -17,7 +18,8 @@ public class CompteDAO {
 
             ps.setString(1, compte.getNumeroCompte());
             ps.setDouble(2, compte.getSolde());
-            ps.setInt(3, compte.getClientId());
+            // Utilise l'objet client pour récupérer l'ID
+            ps.setInt(3, compte.getClient().getId());
 
             ps.executeUpdate();
 
@@ -42,12 +44,17 @@ public class CompteDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return new Compte(
-                            rs.getInt("id"),
+                    // Création d'un objet client avec l'ID de la DB
+                    Client client = new Client();
+                    client.setId(rs.getInt("client_id"));
+
+                    Compte compte = new Compte(
                             rs.getString("numero_compte"),
                             rs.getDouble("solde"),
-                            rs.getInt("client_id")
+                            client
                     );
+                    compte.setId(rs.getInt("id"));
+                    return compte;
                 }
             }
 
@@ -104,12 +111,17 @@ public class CompteDAO {
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                comptes.add(new Compte(
-                        rs.getInt("id"),
+                // Création du client lié
+                Client client = new Client();
+                client.setId(rs.getInt("client_id"));
+
+                Compte c = new Compte(
                         rs.getString("numero_compte"),
                         rs.getDouble("solde"),
-                        rs.getInt("client_id")
-                ));
+                        client
+                );
+                c.setId(rs.getInt("id"));
+                comptes.add(c);
             }
 
         } catch (SQLException e) {
