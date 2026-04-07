@@ -102,5 +102,6 @@ public class OperationDAO {
     private void afficherErreur(String action, SQLException e) {
         System.out.println("Erreur lors de " + action);
         System.out.println("Message: " + e.getMessage());
+        System.out.println("Code: " + e.getErrorCode());
     }
 }

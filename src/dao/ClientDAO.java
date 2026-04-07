@@ -9,8 +9,8 @@ import java.util.List;
 
 public class ClientDAO {
 
-    public int ajouter(Client Client) {
-        String sql = "INSERT INTO Client (nom, prenom, telephone, adresse) VALUES (?, ?, ?, ?)";
+    public int ajouter(Client client) {
+        String sql = "INSERT INTO CLIENT (nom, prenom, telephone, adresse) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -58,7 +58,7 @@ public class ClientDAO {
     }
 
     public Client rechercherParTelephone(String telephone) {
-        String sql = "SELECT * FROM Client WHERE telephone = ?";
+        String sql = "SELECT * FROM CLIENT WHERE telephone = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -87,5 +87,6 @@ public class ClientDAO {
     private void afficherErreur(String action, SQLException e) {
         System.out.println("Erreur lors de " + action);
         System.out.println("Message: " + e.getMessage());
+        System.out.println("Code: " + e.getErrorCode());
     }
 }
