@@ -1,5 +1,46 @@
 {
     "java.project.referencedLibraries": [
         "lib/**/*.jar"
-    ]
+    ],
+    "workbench.colorCustomizations": {
+        "statusBarItem.warningBackground": "#38e58c",
+        "statusBarItem.warningForeground": "#000000",
+        "statusBarItem.warningHoverBackground": "#38e58c",
+        "statusBarItem.warningHoverForeground": "#00000090",
+        "statusBarItem.remoteBackground": "#45f299",
+        "statusBarItem.remoteForeground": "#000000",
+        "statusBarItem.remoteHoverBackground": "#52ffa6",
+        "statusBarItem.remoteHoverForeground": "#00000090",
+        "statusBar.background": "#38e58c",
+        "statusBar.foreground": "#000000",
+        "statusBar.border": "#38e58c",
+        "statusBar.debuggingBackground": "#38e58c",
+        "statusBar.debuggingForeground": "#000000",
+        "statusBar.debuggingBorder": "#38e58c",
+        "statusBar.noFolderBackground": "#38e58c",
+        "statusBar.noFolderForeground": "#000000",
+        "statusBar.noFolderBorder": "#38e58c",
+        "statusBar.prominentBackground": "#38e58c",
+        "statusBar.prominentForeground": "#000000",
+        "statusBar.prominentHoverBackground": "#38e58c",
+        "statusBar.prominentHoverForeground": "#00000090",
+        "focusBorder": "#38e58c99",
+        "progressBar.background": "#38e58c",
+        "textLink.foreground": "#78ffcc",
+        "textLink.activeForeground": "#85ffd9",
+        "selection.background": "#2bd87f",
+        "list.highlightForeground": "#38e58c",
+        "list.focusAndSelectionOutline": "#38e58c99",
+        "button.background": "#38e58c",
+        "button.foreground": "#000000",
+        "button.hoverBackground": "#45f299",
+        "tab.activeBorderTop": "#45f299",
+        "pickerGroup.foreground": "#45f299",
+        "list.activeSelectionBackground": "#38e58c4d",
+        "panelTitle.activeBorder": "#45f299",
+        "activityBar.activeBorder": "#38e58c",
+        "activityBarBadge.foreground": "#000000",
+        "activityBarBadge.background": "#38e58c"
+    },
+    "window.title": "c:\\xampp\\htdocs\\Simulation_Mobile_Money"
 }
