@@ -15,10 +15,11 @@ public class ClientDAO {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setString(1, Client.getNom());
-            ps.setString(2, Client.getPrenom());
-            ps.setString(3, Client.getTelephone());
-            ps.setString(4, Client.getAdresse());
+            // Correction : On utilise l'objet 'client' reçu en paramètre (minuscule)
+            ps.setString(1, client.getNom());
+            ps.setString(2, client.getPrenom());
+            ps.setString(3, client.getTelephone());
+            ps.setString(4, client.getAdresse());
 
             ps.executeUpdate();
 
@@ -33,15 +34,15 @@ public class ClientDAO {
     }
 
     public List<Client> listerTous() {
-        List<Client> Clients = new ArrayList<>();
-        String sql = "SELECT * FROM Client ORDER BY nom";
+        List<Client> clients = new ArrayList<>();
+        String sql = "SELECT * FROM CLIENT ORDER BY nom";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                Clients.add(new Client(
+                clients.add(new Client(
                         rs.getInt("id"),
                         rs.getString("nom"),
                         rs.getString("prenom"),
@@ -54,7 +55,7 @@ public class ClientDAO {
             afficherErreur("liste Clients", e);
         }
 
-        return Clients;
+        return clients;
     }
 
     public Client rechercherParTelephone(String telephone) {

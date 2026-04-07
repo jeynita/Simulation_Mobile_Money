@@ -1,8 +1,19 @@
-public static void main(String[] args) {
-    try {
-        database.DatabaseConnection.getConnection();
-        System.out.println("Connexion réussie à MySQL !");
-    } catch (Exception e) {
-        e.printStackTrace();
+import interfaceUtilisateur.Menu;
+
+public class Main {
+    public static void main(String[] args) {
+        try {
+            database.DatabaseConnection.getConnection();
+            System.out.println("Connexion réussie à MySQL !");
+            
+            Menu menu = new Menu();
+            menu.demarrer();
+            
+        } catch (Exception e) {
+            System.err.println("Erreur de connexion : " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
+
+

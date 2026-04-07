@@ -14,6 +14,13 @@ public class Compte {
         this.client = client;
     }
 
+    public Compte(int id, String numeroCompte, double solde, Client client) {
+        this.id = id;
+        this.numeroCompte = numeroCompte;
+        this.solde = solde;
+        this.client = client;
+    }
+
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -26,11 +33,14 @@ public class Compte {
     public Client getClient() { return client; }
     public void setClient(Client client) { this.client = client; }
 
-    @Override
-    public String toString() {
-        return String.format("Compte{id=%d, numero='%s', solde=%.3f FCFA, client=%d }",
-            id, numeroCompte, solde, client
-        );
+    public int getClientId() {
+        return (this.client != null) ? this.client.getId() : 0;
     }
 
+    @Override
+    public String toString() {
+        return String.format("Compte{id=%d, numero='%s', solde=%.2f FCFA, client_id=%d}",
+            id, numeroCompte, solde, getClientId()
+        );
+    }
 }

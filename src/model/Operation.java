@@ -1,79 +1,135 @@
 package model;
 
 import java.time.LocalDateTime;
-import java.util.*;
 
 public class Operation {
+
+    // -------------------------------------------------------
+    // Enum des types d'opération
+    // -------------------------------------------------------
+    public enum TypeOperation {
+        DEPOT, RETRAIT, TRANSFERT, PAIEMENT
+    }
+
+    // -------------------------------------------------------
+    // Attributs
+    // -------------------------------------------------------
     private int id;
-    private String typeOperation; 
+    private TypeOperation typeOperation;
     private double montant;
     private LocalDateTime dateOperation;
     private String compteSource;
     private String compteDestination;
     private String marchand;
 
-
+    // -------------------------------------------------------
+    // Constructeurs
+    // -------------------------------------------------------
     public Operation() {}
 
+    // Constructeur utilisé par les Services (String → converti en enum)
     public Operation(String typeOperation, double montant, String compteSource) {
-        this.typeOperation = typeOperation;
+        this.typeOperation = TypeOperation.valueOf(typeOperation);
         this.montant = montant;
         this.compteSource = compteSource;
         this.dateOperation = LocalDateTime.now();
     }
 
-    public int getId() 
-    { 
-        return id; 
+    // Constructeur utilisé par OperationDAO.mapper()
+    public Operation(int id, TypeOperation typeOperation, double montant,
+                     LocalDateTime dateOperation, String compteSource,
+                     String compteDestination, String marchand) {
+        this.id = id;
+        this.typeOperation = typeOperation;
+        this.montant = montant;
+        this.dateOperation = dateOperation;
+        this.compteSource = compteSource;
+        this.compteDestination = compteDestination;
+        this.marchand = marchand;
     }
 
-    public String getTypeOperation() { 
+    // -------------------------------------------------------
+    // Getters
+    // -------------------------------------------------------
+    public int getId() {
+        return id;
+    }
+
+    public TypeOperation getTypeOperation() {
         return typeOperation;
-    
     }
+
+    // Getter String pour l'affichage dans Menu.java
+    public String getTypeOperationString() {
+        return typeOperation != null ? typeOperation.name() : "";
+    }
+
     public double getMontant() {
-        return montant; 
+        return montant;
     }
 
-    public LocalDateTime getDateOperation() { 
-        return dateOperation; 
-    }
-    public String getCompteSource() { 
-        return compteSource; 
-    }
-    public String getCompteDestination() { 
-        return compteDestination; 
-    }
-    public String getMarchand() { 
-        return marchand; 
+    public LocalDateTime getDateOperation() {
+        return dateOperation;
     }
 
+    public String getCompteSource() {
+        return compteSource;
+    }
+
+    public String getCompteDestination() {
+        return compteDestination;
+    }
+
+    public String getMarchand() {
+        return marchand;
+    }
+
+    // -------------------------------------------------------
+    // Setters
+    // -------------------------------------------------------
     public void setId(int id) {
-        this.id = id; 
-        }
-    public void setTypeOperation(String typeOperation) { 
-        this.typeOperation = typeOperation; 
+        this.id = id;
     }
-    public void setMontant(double montant) { 
-        this.montant = montant; 
+
+    // Setter String → converti en enum (compatible avec ServiceOperation)
+    public void setTypeOperation(String typeOperation) {
+        this.typeOperation = TypeOperation.valueOf(typeOperation);
     }
-    public void setDateOperation(LocalDateTime dateOperation) { 
-        
-        this.dateOperation = dateOperation; }
-    public void setCompteSource(String compteSource) { 
+
+    public void setTypeOperation(TypeOperation typeOperation) {
+        this.typeOperation = typeOperation;
+    }
+
+    public void setMontant(double montant) {
+        this.montant = montant;
+    }
+
+    public void setDateOperation(LocalDateTime dateOperation) {
+        this.dateOperation = dateOperation;
+    }
+
+    public void setCompteSource(String compteSource) {
         this.compteSource = compteSource;
     }
-    public void setCompteDestination(String compteDestination) { this.compteDestination = compteDestination; }
-    public void setMarchand(String marchand) { 
-        this.marchand = marchand; 
+
+    public void setCompteDestination(String compteDestination) {
+        this.compteDestination = compteDestination;
     }
 
+    public void setMarchand(String marchand) {
+        this.marchand = marchand;
+    }
+
+    // -------------------------------------------------------
+    // toString
+    // -------------------------------------------------------
     @Override
     public String toString() {
         return String.format("Operation{type='%s', montant=%.2f, source='%s', destination='%s', marchand='%s'}",
-                typeOperation, montant, compteSource,
+                typeOperation != null ? typeOperation.name() : "?",
+                montant,
+                compteSource,
                 compteDestination != null ? compteDestination : "non connu",
                 marchand != null ? marchand : "non connu");
     }
-
 }
