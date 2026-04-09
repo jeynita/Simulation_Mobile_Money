@@ -7,11 +7,7 @@ import model.Operation;
 
 import java.util.List;
 
-/**
- * Service des opérations financières.
- * Contient toute la logique métier : dépôt, retrait, transfert, paiement.
- * Chaque opération met à jour le(s) solde(s) puis enregistre l'opération en base.
- */
+
 public class ServiceOperation {
 
     private CompteDAO    compteDAO;
@@ -24,10 +20,7 @@ public class ServiceOperation {
         this.serviceCompte = new ServiceCompte();
     }
 
-    // -------------------------------------------------------
-    // DÉPÔT
-    // Appelé par : Menu.menuDepot()
-    // -------------------------------------------------------
+
     public void effectuerDepot(String numeroCompte, double montant) {
         if (!validerMontant(montant)) return;
 
@@ -54,10 +47,7 @@ public class ServiceOperation {
         System.out.printf("  Nouveau solde : \033[33m%.0f FCFA\033[0m%n", nouveauSolde);
     }
 
-    // -------------------------------------------------------
-    // RETRAIT
-    // Appelé par : Menu.menuRetrait()
-    // -------------------------------------------------------
+
     public void effectuerRetrait(String numeroCompte, double montant) {
         if (!validerMontant(montant)) return;
 
@@ -67,19 +57,16 @@ public class ServiceOperation {
             return;
         }
 
-        // Vérifier solde suffisant
         if (!serviceCompte.soldeEstSuffisant(numeroCompte, montant)) return;
 
         double nouveauSolde = compte.getSolde() - montant;
 
-        // 1. Mettre à jour le solde
         boolean maj = compteDAO.mettreAJourSolde(numeroCompte, nouveauSolde);
         if (!maj) {
             System.out.println("  \033[31m✗ Erreur lors de la mise à jour du solde.\033[0m");
             return;
         }
 
-        // 2. Enregistrer l'opération
         Operation op = new Operation("RETRAIT", montant, numeroCompte);
         operationDAO.enregistrer(op);
 
@@ -87,10 +74,7 @@ public class ServiceOperation {
         System.out.printf("  Nouveau solde : \033[33m%.0f FCFA\033[0m%n", nouveauSolde);
     }
 
-    // -------------------------------------------------------
-    // TRANSFERT
-    // Appelé par : Menu.menuTransfert()
-    // -------------------------------------------------------
+
     public void effectuerTransfert(String compteSource, String compteDestination, double montant) {
         if (!validerMontant(montant)) return;
 
@@ -99,7 +83,6 @@ public class ServiceOperation {
             return;
         }
 
-        // Vérifier les deux comptes
         Compte source = compteDAO.consulterParNumero(compteSource);
         if (source == null) {
             System.out.println("  \033[31m✗ Compte source introuvable : " + compteSource + "\033[0m");
