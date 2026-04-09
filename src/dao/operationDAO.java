@@ -5,7 +5,7 @@ import model.Operation;
 import model.Operation.TypeOperation;
 
 import java.sql.*;
-// import java.time.LocalDateTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,50 +41,58 @@ public class OperationDAO {
         } catch (SQLException e) {
             afficherErreur("enregistrement opération", e);
         }
-
         return -1;
     }
 
     public List<Operation> listerToutes() {
         List<Operation> ops = new ArrayList<>();
         String sql = "SELECT * FROM OPERATION ORDER BY date_operation DESC";
-
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 ops.add(mapper(rs));
             }
-
         } catch (SQLException e) {
             afficherErreur("liste opérations", e);
         }
-
         return ops;
     }
 
     public List<Operation> listerParCompte(String numero) {
         List<Operation> ops = new ArrayList<>();
-        String sql = "SELECT * FROM OPERATION WHERE compte_source = ? OR compte_destination = ?";
-
+        String sql = "SELECT * FROM OPERATION WHERE compte_source = ? OR compte_destination = ? ORDER BY date_operation DESC";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
+            PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, numero);
             ps.setString(2, numero);
-
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     ops.add(mapper(rs));
                 }
             }
-
         } catch (SQLException e) {
             afficherErreur("opérations par compte", e);
         }
-
         return ops;
+    }
+
+    public List<Operation> listerParPeriode(LocalDateTime debut, LocalDateTime fin) {
+        List<Operation> operations = new ArrayList<>();
+        String sql = "SELECT * FROM OPERATION WHERE date_operation BETWEEN ? AND ? ORDER BY date_operation DESC";
+        try (Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setTimestamp(1, Timestamp.valueOf(debut));
+            pstmt.setTimestamp(2, Timestamp.valueOf(fin));
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    operations.add(mapper(rs)); 
+                }
+            }
+        } catch (SQLException e) {
+            afficherErreur("recherche par période", e);
+        }
+        return operations;
     }
 
     private Operation mapper(ResultSet rs) throws SQLException {
@@ -100,8 +108,7 @@ public class OperationDAO {
     }
 
     private void afficherErreur(String action, SQLException e) {
-        System.out.println("Erreur lors de " + action);
-        System.out.println("Message: " + e.getMessage());
-        System.out.println("Code: " + e.getErrorCode());
+        System.err.println("\n  \033[31m✗ Erreur lors de : " + action);
+        System.err.println("  Message : " + e.getMessage() + "\033[0m");
     }
 }
