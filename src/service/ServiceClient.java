@@ -1,10 +1,9 @@
+
 package service;
 
 import dao.ClientDAO;
 import model.Client;
-
 import java.util.List;
-
 
 public class ServiceClient {
 
@@ -14,12 +13,7 @@ public class ServiceClient {
         this.clientDAO = new ClientDAO();
     }
 
-    /**
-     * Valide puis ajoute un nouveau client.
-     * Appelé par : Menu.menuAjouterClient()
-     */
     public boolean ajouterClient(String nom, String prenom, String telephone, String adresse) {
-        // Validation des champs obligatoires
         if (nom == null || nom.trim().isEmpty()) {
             System.out.println("  \033[31m✗ Le nom est obligatoire.\033[0m");
             return false;
@@ -36,14 +30,12 @@ public class ServiceClient {
             return false;
         }
 
-        // Vérifier si le téléphone est déjà utilisé
         Client existant = clientDAO.rechercherParTelephone(telephone.trim());
         if (existant != null) {
             System.out.println("  \033[31m✗ Ce numéro de téléphone est déjà enregistré.\033[0m");
             return false;
         }
 
-        // Création et persistance
         Client client = new Client(0, nom.trim(), prenom.trim(), telephone.trim(), adresse.trim());
         int id = clientDAO.ajouter(client);
 
@@ -56,28 +48,22 @@ public class ServiceClient {
         }
     }
 
-    /**
-     * Retourne la liste de tous les clients.
-     * Appelé par : Menu.menuAfficherClients()
-     */
     public List<Client> listerClients() {
         return clientDAO.listerTous();
     }
 
-    // -------------------------------------------------------
-    // Validation interne
-    // -------------------------------------------------------
     private boolean validerTelephone(String telephone) {
         if (telephone == null || telephone.trim().isEmpty()) {
             System.out.println("  \033[31m✗ Le numéro de téléphone est obligatoire.\033[0m");
             return false;
         }
-        // Format sénégalais : commence par 7, 9 chiffres au total
+
         String tel = telephone.trim().replaceAll("\\s+", "");
         if (!tel.matches("^7[0-9]{8}$")) {
             System.out.println("  \033[31m✗ Numéro invalide. Format attendu : 7XXXXXXXX (ex: 771234567)\033[0m");
             return false;
         }
+        
         return true;
     }
 }

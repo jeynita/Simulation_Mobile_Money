@@ -4,7 +4,6 @@ public class Main {
     public static void main(String[] args) {
         try {
             database.DatabaseConnection.getConnection();
-            System.out.println("Connexion réussie à MySQL !");
             
             Menu menu = new Menu();
             menu.demarrer();

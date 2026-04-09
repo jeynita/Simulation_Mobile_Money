@@ -5,8 +5,8 @@ import dao.OperationDAO;
 import model.Compte;
 import model.Operation;
 
+import java.time.LocalDateTime;
 import java.util.List;
-
 
 public class ServiceOperation {
 
@@ -20,7 +20,6 @@ public class ServiceOperation {
         this.serviceCompte = new ServiceCompte();
     }
 
-
     public void effectuerDepot(String numeroCompte, double montant) {
         if (!validerMontant(montant)) return;
 
@@ -32,21 +31,18 @@ public class ServiceOperation {
 
         double nouveauSolde = compte.getSolde() + montant;
 
-        // 1. Mettre à jour le solde
         boolean maj = compteDAO.mettreAJourSolde(numeroCompte, nouveauSolde);
         if (!maj) {
             System.out.println("  \033[31m✗ Erreur lors de la mise à jour du solde.\033[0m");
             return;
         }
 
-        // 2. Enregistrer l'opération
         Operation op = new Operation("DEPOT", montant, numeroCompte);
         operationDAO.enregistrer(op);
 
         System.out.printf("  \033[32m✓ Dépôt de %.0f FCFA effectué avec succès.\033[0m%n", montant);
         System.out.printf("  Nouveau solde : \033[33m%.0f FCFA\033[0m%n", nouveauSolde);
     }
-
 
     public void effectuerRetrait(String numeroCompte, double montant) {
         if (!validerMontant(montant)) return;
@@ -74,7 +70,6 @@ public class ServiceOperation {
         System.out.printf("  Nouveau solde : \033[33m%.0f FCFA\033[0m%n", nouveauSolde);
     }
 
-
     public void effectuerTransfert(String compteSource, String compteDestination, double montant) {
         if (!validerMontant(montant)) return;
 
@@ -95,16 +90,11 @@ public class ServiceOperation {
             return;
         }
 
-        // Vérifier solde suffisant sur le compte source
         if (!serviceCompte.soldeEstSuffisant(compteSource, montant)) return;
 
-        // 1. Débiter la source
         compteDAO.mettreAJourSolde(compteSource, source.getSolde() - montant);
-
-        // 2. Créditer la destination
         compteDAO.mettreAJourSolde(compteDestination, destination.getSolde() + montant);
 
-        // 3. Enregistrer l'opération
         Operation op = new Operation("TRANSFERT", montant, compteSource);
         op.setCompteDestination(compteDestination);
         operationDAO.enregistrer(op);
@@ -115,10 +105,6 @@ public class ServiceOperation {
         System.out.printf("  Nouveau solde source : \033[33m%.0f FCFA\033[0m%n", source.getSolde() - montant);
     }
 
-    // -------------------------------------------------------
-    // PAIEMENT MARCHAND
-    // Appelé par : Menu.menuPaiementMarchand()
-    // -------------------------------------------------------
     public void effectuerPaiement(String numeroCompte, String nomMarchand, double montant) {
         if (!validerMontant(montant)) return;
 
@@ -133,15 +119,12 @@ public class ServiceOperation {
             return;
         }
 
-        // Vérifier solde suffisant
         if (!serviceCompte.soldeEstSuffisant(numeroCompte, montant)) return;
 
         double nouveauSolde = compte.getSolde() - montant;
 
-        // 1. Débiter le compte
         compteDAO.mettreAJourSolde(numeroCompte, nouveauSolde);
 
-        // 2. Enregistrer l'opération
         Operation op = new Operation("PAIEMENT", montant, numeroCompte);
         op.setMarchand(nomMarchand.trim());
         operationDAO.enregistrer(op);
@@ -150,10 +133,6 @@ public class ServiceOperation {
         System.out.printf("  Nouveau solde : \033[33m%.0f FCFA\033[0m%n", nouveauSolde);
     }
 
-    // -------------------------------------------------------
-    // HISTORIQUE
-    // Appelé par : Menu.menuListeOperations()
-    // -------------------------------------------------------
     public List<Operation> listerToutesOperations() {
         return operationDAO.listerToutes();
     }
@@ -166,9 +145,31 @@ public class ServiceOperation {
         return operationDAO.listerParCompte(numeroCompte.trim());
     }
 
-    // -------------------------------------------------------
-    // Validation interne
-    // -------------------------------------------------------
+    public List<Operation> listerOperationsParPeriode(LocalDateTime debut, LocalDateTime fin) {
+        return operationDAO.listerParPeriode(debut, fin);
+    }
+
+    public void afficherStatistiquesGlobales() {
+        List<Operation> toutes = operationDAO.listerToutes();
+        double totalDepots = 0, totalRetraits = 0, totalTransferts = 0, totalPaiements = 0;
+
+        for (Operation op : toutes) {
+            switch (op.getTypeOperation()) {
+                case DEPOT -> totalDepots += op.getMontant();
+                case RETRAIT -> totalRetraits += op.getMontant();
+                case TRANSFERT -> totalTransferts += op.getMontant();
+                case PAIEMENT -> totalPaiements += op.getMontant();
+            }
+        }
+
+        System.out.println("\n\u001B[34m========== STATISTIQUES GLOBALES ==========\u001B[0m");
+        System.out.printf("Total Dépôts    : %.2f FCFA\n", totalDepots);
+        System.out.printf("Total Retraits  : %.2f FCFA\n", totalRetraits);
+        System.out.printf("Total Transferts: %.2f FCFA\n", totalTransferts);
+        System.out.printf("Total Paiements : %.2f FCFA\n", totalPaiements);
+        System.out.println("\u001B[34m===========================================\u001B[0m");
+    }
+
     private boolean validerMontant(double montant) {
         if (montant <= 0) {
             System.out.println("  \033[31m✗ Le montant doit être supérieur à 0 FCFA.\033[0m");

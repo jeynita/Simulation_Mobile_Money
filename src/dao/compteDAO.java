@@ -18,7 +18,6 @@ public class CompteDAO {
 
             ps.setString(1, compte.getNumeroCompte());
             ps.setDouble(2, compte.getSolde());
-            // Utilise l'objet client pour récupérer l'ID
             ps.setInt(3, compte.getClient().getId());
 
             ps.executeUpdate();
