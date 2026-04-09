@@ -2,8 +2,6 @@
 
 Simulation Mobile Money est une application console de **gestion financière** développée en **Java** avec une persistance des données sous **MySQL**. Elle simule les fonctionnalités essentielles d'un service de Mobile Money (Dépôts, Retraits, Consultation).
 
----
-
 L'objectif de cette application est de fournir une plateforme robuste pour gérer de manière automatisée et sécurisée les interactions financières des clients. Le système repose sur une architecture **DAO (Data Access Object)** pour garantir une séparation claire entre la logique métier et le stockage des données.
 
 ## **Architecture Technique**
@@ -19,7 +17,7 @@ Le système a été conçu en respectant les principes de la **POO**. Voici le d
 
 ---
 
-#  INSTRUCTIONS D'INSTALLATION**
+#  INSTRUCTIONS D'INSTALLATION
 
 ## **Prérequis**
 * **Java JDK 17+** installé.
@@ -70,7 +68,6 @@ Voici les principaux flux d'utilisation de l'application
 Projet réalisé par l'équipe :
 * **Diarra DIA**
 * **Dieynaba BALDE**
-* **Astou**
 * **Rokhaya GUEYE**
 
 **Formation** : DUT2 Informatique - École Supérieure Polytechnique de Dakar
