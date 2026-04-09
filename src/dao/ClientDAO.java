@@ -15,7 +15,6 @@ public class ClientDAO {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            // Correction : On utilise l'objet 'client' reçu en paramètre (minuscule)
             ps.setString(1, client.getNom());
             ps.setString(2, client.getPrenom());
             ps.setString(3, client.getTelephone());

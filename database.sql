@@ -14,17 +14,27 @@ CREATE TABLE COMPTE (
     numero_compte VARCHAR(20) UNIQUE NOT NULL,
     solde DOUBLE DEFAULT 0.0,
     client_id INT,
-    FOREIGN KEY (client_id) REFERENCES CLIENT(id)
+    FOREIGN KEY (client_id) REFERENCES CLIENT(id) ON DELETE CASCADE
 );
+
 
 CREATE TABLE OPERATION (
     id INT PRIMARY KEY AUTO_INCREMENT,
     type_operation ENUM('DEPOT', 'RETRAIT', 'TRANSFERT', 'PAIEMENT') NOT NULL,
     montant DOUBLE NOT NULL,
     date_operation DATETIME DEFAULT CURRENT_TIMESTAMP,
-    compte_source INT,
-    compte_destination INT NULL, -- Pour les transferts
-    marchand VARCHAR(50) NULL,    -- Pour les paiements marchands
-    FOREIGN KEY (compte_source) REFERENCES COMPTE(id),
-    FOREIGN KEY (compte_destination) REFERENCES COMPTE(id)
+    compte_source VARCHAR(20) NOT NULL, 
+    compte_destination VARCHAR(20) NULL, 
+    marchand VARCHAR(50) NULL
 );
+
+CREATE TABLE IF NOT EXISTS MARCHAND (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nom_enseigne VARCHAR(100) NOT NULL,
+    code_marchand VARCHAR(10) UNIQUE NOT NULL
+);
+
+INSERT INTO MARCHAND (nom_enseigne, code_marchand) VALUES 
+('BERNDE', 'M001'), 
+('POLYTECHNICIENNE', 'M002'),
+('MULTISERVICE', 'M003');
