@@ -2,24 +2,30 @@ package service;
 
 import dao.CompteDAO;
 import dao.OperationDAO;
+import dao.MarchandDAO; // Import ajouté
 import model.Compte;
 import model.Operation;
+import model.Marchand; // Import ajouté
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.ArrayList;
 
 public class ServiceOperation {
 
     private CompteDAO    compteDAO;
     private OperationDAO operationDAO;
     private ServiceCompte serviceCompte;
+    private MarchandDAO  marchandDAO; // Attribut ajouté
 
     public ServiceOperation() {
         this.compteDAO     = new CompteDAO();
         this.operationDAO  = new OperationDAO();
         this.serviceCompte = new ServiceCompte();
+        this.marchandDAO   = new MarchandDAO(); // Initialisation
     }
 
+    // --- MÉTHODE : DÉPÔT ---
     public void effectuerDepot(String numeroCompte, double montant) {
         if (!validerMontant(montant)) return;
 
@@ -44,6 +50,7 @@ public class ServiceOperation {
         System.out.printf("  Nouveau solde : \033[33m%.0f FCFA\033[0m%n", nouveauSolde);
     }
 
+    // --- MÉTHODE : RETRAIT ---
     public void effectuerRetrait(String numeroCompte, double montant) {
         if (!validerMontant(montant)) return;
 
@@ -70,6 +77,7 @@ public class ServiceOperation {
         System.out.printf("  Nouveau solde : \033[33m%.0f FCFA\033[0m%n", nouveauSolde);
     }
 
+    // --- MÉTHODE : TRANSFERT ---
     public void effectuerTransfert(String compteSource, String compteDestination, double montant) {
         if (!validerMontant(montant)) return;
 
@@ -79,19 +87,16 @@ public class ServiceOperation {
         }
 
         Compte source = compteDAO.consulterParNumero(compteSource);
-        if (source == null) {
-            System.out.println("  \033[31m✗ Compte source introuvable : " + compteSource + "\033[0m");
-            return;
-        }
-
         Compte destination = compteDAO.consulterParNumero(compteDestination);
-        if (destination == null) {
-            System.out.println("  \033[31m✗ Compte destination introuvable : " + compteDestination + "\033[0m");
+
+        if (source == null || destination == null) {
+            System.out.println("  \033[31m✗ Un des comptes est introuvable.\033[0m");
             return;
         }
 
         if (!serviceCompte.soldeEstSuffisant(compteSource, montant)) return;
 
+        // Transaction
         compteDAO.mettreAJourSolde(compteSource, source.getSolde() - montant);
         compteDAO.mettreAJourSolde(compteDestination, destination.getSolde() + montant);
 
@@ -102,14 +107,16 @@ public class ServiceOperation {
         System.out.printf("  \033[32m✓ Transfert de %.0f FCFA effectué avec succès.\033[0m%n", montant);
         System.out.println("  De   : \033[36m" + compteSource + "\033[0m");
         System.out.println("  Vers : \033[36m" + compteDestination + "\033[0m");
-        System.out.printf("  Nouveau solde source : \033[33m%.0f FCFA\033[0m%n", source.getSolde() - montant);
     }
 
+    // --- MÉTHODE : PAIEMENT MARCHAND (Corrigée avec MarchandDAO) ---
     public void effectuerPaiement(String numeroCompte, String nomMarchand, double montant) {
         if (!validerMontant(montant)) return;
 
-        if (nomMarchand == null || nomMarchand.trim().isEmpty()) {
-            System.out.println("  \033[31m✗ Le nom du marchand est obligatoire.\033[0m");
+        // Validation du marchand via le DAO
+        Marchand marchand = marchandDAO.trouverParNom(nomMarchand.trim());
+        if (marchand == null) {
+            System.out.println("  \033[31m✗ Le marchand '" + nomMarchand + "' n'est pas répertorié.\033[0m");
             return;
         }
 
@@ -122,25 +129,27 @@ public class ServiceOperation {
         if (!serviceCompte.soldeEstSuffisant(numeroCompte, montant)) return;
 
         double nouveauSolde = compte.getSolde() - montant;
+        boolean maj = compteDAO.mettreAJourSolde(numeroCompte, nouveauSolde);
 
-        compteDAO.mettreAJourSolde(numeroCompte, nouveauSolde);
+        if (maj) {
+            Operation op = new Operation("PAIEMENT", montant, numeroCompte);
+            op.setMarchand(marchand.getNomEnseigne());
+            operationDAO.enregistrer(op);
 
-        Operation op = new Operation("PAIEMENT", montant, numeroCompte);
-        op.setMarchand(nomMarchand.trim());
-        operationDAO.enregistrer(op);
-
-        System.out.printf("  \033[32m✓ Paiement de %.0f FCFA à %s effectué.\033[0m%n", montant, nomMarchand);
-        System.out.printf("  Nouveau solde : \033[33m%.0f FCFA\033[0m%n", nouveauSolde);
+            System.out.printf("  \033[32m✓ Paiement de %.0f FCFA à %s (%s) effectué.\033[0m%n", 
+                               montant, marchand.getNomEnseigne(), marchand.getCodeMarchand());
+            System.out.printf("  Nouveau solde : \033[33m%.0f FCFA\033[0m%n", nouveauSolde);
+        }
     }
 
+    // --- HISTORIQUE ---
     public List<Operation> listerToutesOperations() {
         return operationDAO.listerToutes();
     }
 
     public List<Operation> listerOperationsParCompte(String numeroCompte) {
         if (numeroCompte == null || numeroCompte.trim().isEmpty()) {
-            System.out.println("  \033[31m✗ Numéro de compte invalide.\033[0m");
-            return new java.util.ArrayList<>();
+            return new ArrayList<>();
         }
         return operationDAO.listerParCompte(numeroCompte.trim());
     }
@@ -149,6 +158,7 @@ public class ServiceOperation {
         return operationDAO.listerParPeriode(debut, fin);
     }
 
+    // --- STATISTIQUES ---
     public void afficherStatistiquesGlobales() {
         List<Operation> toutes = operationDAO.listerToutes();
         double totalDepots = 0, totalRetraits = 0, totalTransferts = 0, totalPaiements = 0;
@@ -162,12 +172,12 @@ public class ServiceOperation {
             }
         }
 
-        System.out.println("\n\u001B[34m========== STATISTIQUES GLOBALES ==========\u001B[0m");
-        System.out.printf("Total Dépôts    : %.2f FCFA\n", totalDepots);
-        System.out.printf("Total Retraits  : %.2f FCFA\n", totalRetraits);
-        System.out.printf("Total Transferts: %.2f FCFA\n", totalTransferts);
-        System.out.printf("Total Paiements : %.2f FCFA\n", totalPaiements);
-        System.out.println("\u001B[34m===========================================\u001B[0m");
+        System.out.println("\n\033[34m========== STATISTIQUES GLOBALES ==========\033[0m");
+        System.out.printf("Total Dépôts    : %.0f FCFA\n", totalDepots);
+        System.out.printf("Total Retraits  : %.0f FCFA\n", totalRetraits);
+        System.out.printf("Total Transferts: %.0f FCFA\n", totalTransferts);
+        System.out.printf("Total Paiements : %.0f FCFA\n", totalPaiements);
+        System.out.println("\033[34m===========================================\033[0m");
     }
 
     private boolean validerMontant(double montant) {
