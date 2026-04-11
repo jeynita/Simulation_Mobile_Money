@@ -4,16 +4,12 @@ import java.time.LocalDateTime;
 
 public class Operation {
 
-    // -------------------------------------------------------
-    // Enum des types d'opération
-    // -------------------------------------------------------
+ 
     public enum TypeOperation {
         DEPOT, RETRAIT, TRANSFERT, PAIEMENT
     }
 
-    // -------------------------------------------------------
-    // Attributs
-    // -------------------------------------------------------
+   
     private int id;
     private TypeOperation typeOperation;
     private double montant;
@@ -22,12 +18,8 @@ public class Operation {
     private String compteDestination;
     private String marchand;
 
-    // -------------------------------------------------------
-    // Constructeurs
-    // -------------------------------------------------------
     public Operation() {}
 
-    // Constructeur utilisé par les Services (String → converti en enum)
     public Operation(String typeOperation, double montant, String compteSource) {
         this.typeOperation = TypeOperation.valueOf(typeOperation);
         this.montant = montant;
@@ -35,7 +27,6 @@ public class Operation {
         this.dateOperation = LocalDateTime.now();
     }
 
-    // Constructeur utilisé par OperationDAO.mapper()
     public Operation(int id, TypeOperation typeOperation, double montant,
                      LocalDateTime dateOperation, String compteSource,
                      String compteDestination, String marchand) {
@@ -48,9 +39,6 @@ public class Operation {
         this.marchand = marchand;
     }
 
-    // -------------------------------------------------------
-    // Getters
-    // -------------------------------------------------------
     public int getId() {
         return id;
     }
@@ -59,7 +47,6 @@ public class Operation {
         return typeOperation;
     }
 
-    // Getter String pour l'affichage dans Menu.java
     public String getTypeOperationString() {
         return typeOperation != null ? typeOperation.name() : "";
     }
@@ -84,14 +71,11 @@ public class Operation {
         return marchand;
     }
 
-    // -------------------------------------------------------
-    // Setters
-    // -------------------------------------------------------
+   
     public void setId(int id) {
         this.id = id;
     }
 
-    // Setter String → converti en enum (compatible avec ServiceOperation)
     public void setTypeOperation(String typeOperation) {
         this.typeOperation = TypeOperation.valueOf(typeOperation);
     }
@@ -120,9 +104,6 @@ public class Operation {
         this.marchand = marchand;
     }
 
-    // -------------------------------------------------------
-    // toString
-    // -------------------------------------------------------
     @Override
     public String toString() {
         return String.format("Operation{type='%s', montant=%.2f, source='%s', destination='%s', marchand='%s'}",

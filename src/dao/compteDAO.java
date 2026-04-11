@@ -110,7 +110,6 @@ public class CompteDAO {
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                // Création du client lié
                 Client client = new Client();
                 client.setId(rs.getInt("client_id"));
 

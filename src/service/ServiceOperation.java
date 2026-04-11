@@ -2,10 +2,10 @@ package service;
 
 import dao.CompteDAO;
 import dao.OperationDAO;
-import dao.MarchandDAO; // Import ajouté
+import dao.MarchandDAO; 
 import model.Compte;
 import model.Operation;
-import model.Marchand; // Import ajouté
+import model.Marchand; 
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,16 +16,15 @@ public class ServiceOperation {
     private CompteDAO    compteDAO;
     private OperationDAO operationDAO;
     private ServiceCompte serviceCompte;
-    private MarchandDAO  marchandDAO; // Attribut ajouté
+    private MarchandDAO  marchandDAO; 
 
     public ServiceOperation() {
         this.compteDAO     = new CompteDAO();
         this.operationDAO  = new OperationDAO();
         this.serviceCompte = new ServiceCompte();
-        this.marchandDAO   = new MarchandDAO(); // Initialisation
+        this.marchandDAO   = new MarchandDAO(); 
     }
 
-    // --- MÉTHODE : DÉPÔT ---
     public void effectuerDepot(String numeroCompte, double montant) {
         if (!validerMontant(montant)) return;
 
@@ -50,7 +49,6 @@ public class ServiceOperation {
         System.out.printf("  Nouveau solde : \033[33m%.0f FCFA\033[0m%n", nouveauSolde);
     }
 
-    // --- MÉTHODE : RETRAIT ---
     public void effectuerRetrait(String numeroCompte, double montant) {
         if (!validerMontant(montant)) return;
 
@@ -77,7 +75,6 @@ public class ServiceOperation {
         System.out.printf("  Nouveau solde : \033[33m%.0f FCFA\033[0m%n", nouveauSolde);
     }
 
-    // --- MÉTHODE : TRANSFERT ---
     public void effectuerTransfert(String compteSource, String compteDestination, double montant) {
         if (!validerMontant(montant)) return;
 
@@ -96,7 +93,6 @@ public class ServiceOperation {
 
         if (!serviceCompte.soldeEstSuffisant(compteSource, montant)) return;
 
-        // Transaction
         compteDAO.mettreAJourSolde(compteSource, source.getSolde() - montant);
         compteDAO.mettreAJourSolde(compteDestination, destination.getSolde() + montant);
 
@@ -109,11 +105,9 @@ public class ServiceOperation {
         System.out.println("  Vers : \033[36m" + compteDestination + "\033[0m");
     }
 
-    // --- MÉTHODE : PAIEMENT MARCHAND (Corrigée avec MarchandDAO) ---
     public void effectuerPaiement(String numeroCompte, String nomMarchand, double montant) {
         if (!validerMontant(montant)) return;
 
-        // Validation du marchand via le DAO
         Marchand marchand = marchandDAO.trouverParNom(nomMarchand.trim());
         if (marchand == null) {
             System.out.println("  \033[31m✗ Le marchand '" + nomMarchand + "' n'est pas répertorié.\033[0m");
@@ -142,7 +136,6 @@ public class ServiceOperation {
         }
     }
 
-    // --- HISTORIQUE ---
     public List<Operation> listerToutesOperations() {
         return operationDAO.listerToutes();
     }
@@ -158,7 +151,6 @@ public class ServiceOperation {
         return operationDAO.listerParPeriode(debut, fin);
     }
 
-    // --- STATISTIQUES ---
     public void afficherStatistiquesGlobales() {
         List<Operation> toutes = operationDAO.listerToutes();
         double totalDepots = 0, totalRetraits = 0, totalTransferts = 0, totalPaiements = 0;

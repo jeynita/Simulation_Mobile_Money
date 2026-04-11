@@ -7,7 +7,6 @@ public class Client {
     private String telephone;
     private String adresse;
 
-    // Constructeurs, Getters et Setters (Encapsulation)
     public Client() {}
     public Client(int id, String nom, String prenom, String telephone, String adresse) {
         this.id = id;
