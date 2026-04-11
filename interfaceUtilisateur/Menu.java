@@ -20,7 +20,6 @@ public class Menu {
     private ServiceCompte serviceCompte;
     private ServiceOperation serviceOperation;
 
-    // Codes couleurs ANSI pour le terminal
     private static final String RESET  = "\033[0m";
     private static final String JAUNE  = "\033[33m";
     private static final String CYAN   = "\033[36m";
@@ -160,7 +159,6 @@ public class Menu {
             String dateStr = lireTexte("Date cible");
             LocalDate dateChoisie = LocalDate.parse(dateStr);
             
-            // On définit le début (00:00:00) et la fin (23:59:59) de la journée
             LocalDateTime debut = dateChoisie.atStartOfDay();
             LocalDateTime fin = dateChoisie.atTime(LocalTime.MAX);
 
@@ -239,7 +237,7 @@ public class Menu {
         System.out.println(pad + "│  " + JAUNE + "[5]" + RESET + "  " + CYAN + "Retrait d'argent" + RESET + "                      " + GRIS + "│");
         System.out.println(pad + "│  " + JAUNE + "[6]" + RESET + "  " + CYAN + "Transfert d'argent" + RESET + "                    " + GRIS + "│");
         System.out.println(pad + "│  " + JAUNE + "[7]" + RESET + "  " + CYAN + "Paiement marchand" + RESET + "                     " + GRIS + "│");
-        System.out.println(pad + "│  " + JAUNE + "[8]" + RESET + "  " + CYAN + "Historique complet" + RESET + "                    " + GRIS + "│");
+        System.out.println(pad + "│  " + JAUNE + "[8]" + RESET + "  " + CYAN + "Liste des operations" + RESET + "                    " + GRIS + "│");
         System.out.println(pad + "│  " + JAUNE + "[9]" + RESET + "  " + VERT + "Rechercher par date" + RESET + "                   " + GRIS + "│");
         System.out.println(pad + "│  " + JAUNE + "[10]" + RESET + " " + VERT + "Statistiques globales" + RESET + "                 " + GRIS + "│");
         System.out.println(pad + "│  " + JAUNE + "[0]" + RESET + "  " + ROUGE + "Quitter le système" + RESET + "                    " + GRIS + "│");
